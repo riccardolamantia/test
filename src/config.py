@@ -19,6 +19,12 @@ TIMEFRAME = os.getenv("TIMEFRAME", "1h")
 FAST_MA = int(os.getenv("FAST_MA", "20"))
 SLOW_MA = int(os.getenv("SLOW_MA", "50"))
 
+# Regime filter: only open new positions while price is above this long moving average
+TREND_FILTER_MA = int(os.getenv("TREND_FILTER_MA", "200"))
+
+# Number of equal segments the backtest window is split into for the consistency report
+BACKTEST_SEGMENTS = int(os.getenv("BACKTEST_SEGMENTS", "4"))
+
 TRADE_AMOUNT_QUOTE = float(os.getenv("TRADE_AMOUNT_QUOTE", "50"))
 
 # Risk management: exit a position early if price moves this much against/in favor of entry

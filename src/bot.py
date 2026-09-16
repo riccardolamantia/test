@@ -8,7 +8,7 @@ import time
 from src import config
 from src.exchange import build_exchange, fetch_ohlcv, place_order
 from src.risk import check_exit
-from src.strategy import latest_signal
+from src.strategy import latest_signal, required_candles
 
 
 def run():
@@ -19,7 +19,7 @@ def run():
 
     while True:
         for symbol in config.SYMBOLS:
-            df = fetch_ohlcv(exchange, symbol, limit=config.SLOW_MA + 10)
+            df = fetch_ohlcv(exchange, symbol, limit=required_candles())
             signal = latest_signal(df)
             price = df.iloc[-1]["close"]
             timestamp = df.iloc[-1]["timestamp"]

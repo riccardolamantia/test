@@ -48,8 +48,14 @@ python -m src.bot
 ```
 
 Il bot controlla il segnale di ogni simbolo, in sequenza, ogni `POLL_INTERVAL_SECONDS`
-secondi, e apre/chiude una posizione long quando la media mobile veloce incrocia
-quella lenta (o scatta lo stop-loss/take-profit).
+secondi, e apre una posizione long quando la media mobile veloce incrocia quella lenta
+**e** il prezzo è sopra la media di tendenza (`TREND_FILTER_MA`, default 200): in un
+mercato in discesa prolungata resta in liquidità invece di comprare ogni rimbalzo.
+Chiude la posizione all'incrocio opposto o quando scatta lo stop-loss/take-profit.
+
+Il backtest stampa anche una tabella di consistenza: la finestra storica viene divisa
+in `BACKTEST_SEGMENTS` periodi uguali e per ognuno confronta bot e buy&hold. Una
+strategia affidabile deve reggere nella maggior parte dei periodi, non solo nel totale.
 
 ## Struttura
 
