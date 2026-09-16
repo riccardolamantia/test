@@ -46,10 +46,20 @@ def run_backtest(df: pd.DataFrame, starting_balance: float = 1000.0) -> dict:
     }
 
 
+def buy_and_hold_return_pct(df: pd.DataFrame) -> float:
+    """Benchmark: what a simple 'buy at the start, never sell' approach would have returned."""
+    first_price = df.iloc[0]["close"]
+    last_price = df.iloc[-1]["close"]
+    fee_rate = config.FEE_PCT / 100
+    final_value = (1 - fee_rate) * (last_price / first_price)
+    return (final_value - 1) * 100
+
+
 if __name__ == "__main__":
     exchange = build_exchange()
     data = fetch_ohlcv_history(exchange, total_candles=config.BACKTEST_CANDLES)
     result = run_backtest(data)
+    hold_return = buy_and_hold_return_pct(data)
 
     print(f"Symbol: {config.SYMBOL} | Timeframe: {config.TIMEFRAME}")
     print(f"Period: {data.iloc[0]['timestamp']} -> {data.iloc[-1]['timestamp']} ({len(data)} candele)")
@@ -59,4 +69,5 @@ if __name__ == "__main__":
         print(f"  {side:12s} {ts} @ {price}")
     print(f"Starting balance: {result['starting_balance']:.2f}")
     print(f"Final value:      {result['final_value']:.2f}")
-    print(f"Return:           {result['return_pct']:.2f}%")
+    print(f"Return (bot):     {result['return_pct']:.2f}%")
+    print(f"Return (buy&hold):{hold_return:.2f}%")
