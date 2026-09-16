@@ -21,5 +21,9 @@ SLOW_MA = int(os.getenv("SLOW_MA", "50"))
 
 TRADE_AMOUNT_QUOTE = float(os.getenv("TRADE_AMOUNT_QUOTE", "50"))
 
+# Risk management: exit a position early if price moves this much against/in favor of entry
+STOP_LOSS_PCT = float(os.getenv("STOP_LOSS_PCT", "5"))
+TAKE_PROFIT_PCT = float(os.getenv("TAKE_PROFIT_PCT", "10"))
+
 DRY_RUN = _bool(os.getenv("DRY_RUN", "true"))
 POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "300"))

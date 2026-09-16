@@ -6,6 +6,7 @@ import pandas as pd
 
 from src import config
 from src.exchange import build_exchange, fetch_ohlcv
+from src.risk import check_exit
 from src.strategy import add_signals
 
 
@@ -15,19 +16,23 @@ def run_backtest(df: pd.DataFrame, starting_balance: float = 1000.0) -> dict:
     quote_balance = starting_balance
     base_balance = 0.0
     in_position = False
+    entry_price = None
     trades = []
 
     for _, row in df.iterrows():
-        if row["signal"] == "BUY" and not in_position:
+        if in_position:
+            should_exit, reason = check_exit(entry_price, row["close"])
+            if should_exit or row["signal"] == "SELL":
+                quote_balance = base_balance * row["close"]
+                base_balance = 0.0
+                in_position = False
+                trades.append((reason or "SELL", row["timestamp"], row["close"]))
+        elif row["signal"] == "BUY":
             base_balance = quote_balance / row["close"]
             quote_balance = 0.0
             in_position = True
+            entry_price = row["close"]
             trades.append(("BUY", row["timestamp"], row["close"]))
-        elif row["signal"] == "SELL" and in_position:
-            quote_balance = base_balance * row["close"]
-            base_balance = 0.0
-            in_position = False
-            trades.append(("SELL", row["timestamp"], row["close"]))
 
     final_price = df.iloc[-1]["close"]
     final_value = quote_balance + base_balance * final_price
