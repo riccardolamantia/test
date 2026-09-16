@@ -57,6 +57,27 @@ Il backtest stampa anche una tabella di consistenza: la finestra storica viene d
 in `BACKTEST_SEGMENTS` periodi uguali e per ognuno confronta bot e buy&hold. Una
 strategia affidabile deve reggere nella maggior parte dei periodi, non solo nel totale.
 
+## Rotazione momentum su tutto il mercato
+
+Approccio alternativo al bot a medie mobili: invece di seguire una lista fissa di monete,
+scansiona le coppie più liquide dell'exchange, le classifica per forza del trend recente
+e tiene solo le migliori, ribilanciando periodicamente.
+
+```bash
+python -m src.rotation
+```
+
+La selezione a ogni ribilanciamento usa **solo** le candele fino a quel momento, e il
+rendimento è misurato su ciò che accade dopo: il test non può sbirciare nel futuro.
+
+Parametri principali (`.env`): `UNIVERSE_SIZE` (quante monete scansionare),
+`MOMENTUM_LOOKBACK` (su quante candele misurare la forza), `HOLD_PERIODS` (ogni quanto
+ribilanciare), `TOP_K` (quante monete tenere).
+
+**Bias di sopravvivenza**: l'universo è scelto tra le monete più scambiate *oggi*, quindi
+quelle crollate o delistate in passato non compaiono. Il risultato del test è perciò
+più ottimista di quanto sarebbe stato nella realtà.
+
 ## Struttura
 
 - `src/config.py` — parametri caricati da `.env`
@@ -64,6 +85,8 @@ strategia affidabile deve reggere nella maggior parte dei periodi, non solo nel 
 - `src/strategy.py` — logica di segnale (SMA crossover)
 - `src/risk.py` — stop-loss / take-profit
 - `src/backtest.py` — backtest su dati storici
+- `src/universe.py` — scansione delle coppie più liquide dell'exchange
+- `src/rotation.py` — backtest della rotazione momentum su tutto il mercato
 - `src/bot.py` — loop live
 
 ## Guida passo-passo per farlo girare davvero (partendo da zero)

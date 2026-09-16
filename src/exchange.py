@@ -22,14 +22,17 @@ def fetch_ohlcv(exchange: ccxt.Exchange, symbol: str, limit: int = 200) -> pd.Da
     return df
 
 
-def fetch_ohlcv_history(exchange: ccxt.Exchange, symbol: str, total_candles: int) -> pd.DataFrame:
+def fetch_ohlcv_history(
+    exchange: ccxt.Exchange, symbol: str, total_candles: int, timeframe: str | None = None
+) -> pd.DataFrame:
     """Paginates fetch_ohlcv backwards in time to gather more candles than a single call allows."""
-    timeframe_ms = exchange.parse_timeframe(config.TIMEFRAME) * 1000
+    timeframe = timeframe or config.TIMEFRAME
+    timeframe_ms = exchange.parse_timeframe(timeframe) * 1000
     since = exchange.milliseconds() - total_candles * timeframe_ms
 
     all_rows = []
     while len(all_rows) < total_candles:
-        batch = exchange.fetch_ohlcv(symbol, timeframe=config.TIMEFRAME, since=since, limit=1000)
+        batch = exchange.fetch_ohlcv(symbol, timeframe=timeframe, since=since, limit=1000)
         if not batch:
             break
         all_rows.extend(batch)

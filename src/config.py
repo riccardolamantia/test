@@ -25,6 +25,15 @@ TREND_FILTER_MA = int(os.getenv("TREND_FILTER_MA", "200"))
 # Number of equal segments the backtest window is split into for the consistency report
 BACKTEST_SEGMENTS = int(os.getenv("BACKTEST_SEGMENTS", "4"))
 
+# Momentum rotation (src/rotation.py): scan the most liquid pairs, hold the strongest few
+QUOTE_CURRENCY = os.getenv("QUOTE_CURRENCY", "USDT")
+UNIVERSE_SIZE = int(os.getenv("UNIVERSE_SIZE", "40"))
+ROTATION_TIMEFRAME = os.getenv("ROTATION_TIMEFRAME", "1d")
+ROTATION_CANDLES = int(os.getenv("ROTATION_CANDLES", "700"))
+MOMENTUM_LOOKBACK = int(os.getenv("MOMENTUM_LOOKBACK", "30"))
+HOLD_PERIODS = int(os.getenv("HOLD_PERIODS", "7"))
+TOP_K = int(os.getenv("TOP_K", "5"))
+
 TRADE_AMOUNT_QUOTE = float(os.getenv("TRADE_AMOUNT_QUOTE", "50"))
 
 # Risk management: exit a position early if price moves this much against/in favor of entry
