@@ -1,4 +1,5 @@
-"""Simple long-only backtest of the SMA crossover strategy over historical OHLCV data.
+"""Long-only backtest of the SMA crossover strategy over historical OHLCV data,
+run independently across every symbol in config.SYMBOLS with an equal split of capital.
 
 Usage: python -m src.backtest
 """
@@ -57,17 +58,33 @@ def buy_and_hold_return_pct(df: pd.DataFrame) -> float:
 
 if __name__ == "__main__":
     exchange = build_exchange()
-    data = fetch_ohlcv_history(exchange, total_candles=config.BACKTEST_CANDLES)
-    result = run_backtest(data)
-    hold_return = buy_and_hold_return_pct(data)
+    total_starting_balance = 1000.0
+    per_symbol_balance = total_starting_balance / len(config.SYMBOLS)
 
-    print(f"Symbol: {config.SYMBOL} | Timeframe: {config.TIMEFRAME}")
-    print(f"Period: {data.iloc[0]['timestamp']} -> {data.iloc[-1]['timestamp']} ({len(data)} candele)")
+    portfolio_final_value = 0.0
+    portfolio_hold_final_value = 0.0
+
+    for symbol in config.SYMBOLS:
+        data = fetch_ohlcv_history(exchange, symbol, total_candles=config.BACKTEST_CANDLES)
+        result = run_backtest(data, starting_balance=per_symbol_balance)
+        hold_return = buy_and_hold_return_pct(data)
+
+        portfolio_final_value += result["final_value"]
+        portfolio_hold_final_value += per_symbol_balance * (1 + hold_return / 100)
+
+        print(f"\n=== {symbol} ({config.TIMEFRAME}) ===")
+        print(f"Period: {data.iloc[0]['timestamp']} -> {data.iloc[-1]['timestamp']} ({len(data)} candele)")
+        print(f"Trades: {len(result['trades'])}")
+        print(f"Return (bot):      {result['return_pct']:.2f}%")
+        print(f"Return (buy&hold): {hold_return:.2f}%")
+
+    portfolio_return = (portfolio_final_value / total_starting_balance - 1) * 100
+    portfolio_hold_return = (portfolio_hold_final_value / total_starting_balance - 1) * 100
+
+    print("\n=== PORTFOLIO (capitale diviso equamente tra i simboli) ===")
+    print(f"Symbols: {', '.join(config.SYMBOLS)}")
     print(f"Fee per trade: {config.FEE_PCT}%")
-    print(f"Trades executed: {len(result['trades'])}")
-    for side, ts, price in result["trades"]:
-        print(f"  {side:12s} {ts} @ {price}")
-    print(f"Starting balance: {result['starting_balance']:.2f}")
-    print(f"Final value:      {result['final_value']:.2f}")
-    print(f"Return (bot):     {result['return_pct']:.2f}%")
-    print(f"Return (buy&hold):{hold_return:.2f}%")
+    print(f"Starting balance: {total_starting_balance:.2f}")
+    print(f"Final value:       {portfolio_final_value:.2f}")
+    print(f"Return (bot):      {portfolio_return:.2f}%")
+    print(f"Return (buy&hold): {portfolio_hold_return:.2f}%")

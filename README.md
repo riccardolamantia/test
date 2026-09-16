@@ -2,7 +2,9 @@
 
 Bot di trading automatico basato su [ccxt](https://github.com/ccxt/ccxt), con strategia
 a incrocio di medie mobili (SMA crossover), backtest su dati storici e modalità live
-con esecuzione ordini sull'exchange configurato (default: Binance).
+con esecuzione ordini sull'exchange configurato (default: Binance). Traccia e opera
+in parallelo su più simboli contemporaneamente (default: BTC, ETH, SOL, BNB, XRP),
+dividendo il capitale tra loro.
 
 ## Avvertenza
 
@@ -20,13 +22,20 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Modifica `.env` con i parametri desiderati (simbolo, timeframe, medie mobili, importo
+Modifica `.env` con i parametri desiderati (simboli, timeframe, medie mobili, importo
 per ordine). Le chiavi API (`API_KEY`/`API_SECRET`) sono necessarie solo in modalità
 live (`DRY_RUN=false`) o per operazioni autenticate.
 
+`SYMBOLS` accetta una lista separata da virgole (es. `BTC/USDT,ETH/USDT,SOL/USDT`).
+`TRADE_AMOUNT_QUOTE` è l'importo per operazione **per ogni singolo simbolo**: con 5
+simboli e `TRADE_AMOUNT_QUOTE=20`, l'esposizione massima totale (se tutti i simboli
+sono in posizione contemporaneamente) è 5 x 20 = 100.
+
 ## Backtest
 
-Simula la strategia sui dati storici recenti e stampa il rendimento:
+Simula la strategia sui dati storici recenti per ogni simbolo configurato, con il
+capitale diviso equamente tra loro, e stampa il rendimento per simbolo e a livello
+di portafoglio, confrontato con il semplice "compra e tieni":
 
 ```bash
 python -m src.backtest
@@ -38,8 +47,9 @@ python -m src.backtest
 python -m src.bot
 ```
 
-Il bot controlla il segnale ogni `POLL_INTERVAL_SECONDS` secondi e apre/chiude una
-posizione long quando la media mobile veloce incrocia quella lenta.
+Il bot controlla il segnale di ogni simbolo, in sequenza, ogni `POLL_INTERVAL_SECONDS`
+secondi, e apre/chiude una posizione long quando la media mobile veloce incrocia
+quella lenta (o scatta lo stop-loss/take-profit).
 
 ## Struttura
 
@@ -109,14 +119,17 @@ Imposta `DRY_RUN=false` nel `.env` solo quando:
 
 - La strategia (incrocio di due medie mobili) è volutamente semplice: è un punto di
   partenza per imparare, non una strategia validata professionalmente.
-- Il backtest qui incluso non tiene conto di commissioni e slippage: nella realtà i
-  rendimenti saranno più bassi.
+- Il backtest include le commissioni ma non lo slippage (la differenza tra il prezzo
+  atteso e quello realmente ottenuto): nella realtà i rendimenti saranno più bassi.
 - Nessuna garanzia di profitto: i mercati finanziari sono imprevedibili, specialmente
   su capitali piccoli dove le commissioni pesano di più.
+- Testato finora solo su pochi mesi di storico: un risultato positivo nel backtest
+  non garantisce risultati futuri simili.
 
 ## Prossimi passi possibili
 
 - Strategie aggiuntive (RSI, MACD, breakout) e selezione a runtime
-- Commissioni e slippage realistici nel backtest
+- Slippage realistico nel backtest
+- Limite al numero massimo di posizioni aperte contemporaneamente
 - Persistenza storico operazioni e reportistica
 - Notifiche (Telegram/email) sui segnali eseguiti

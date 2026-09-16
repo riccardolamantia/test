@@ -13,7 +13,7 @@ EXCHANGE = os.getenv("EXCHANGE", "binance")
 API_KEY = os.getenv("API_KEY", "")
 API_SECRET = os.getenv("API_SECRET", "")
 
-SYMBOL = os.getenv("SYMBOL", "BTC/USDT")
+SYMBOLS = [s.strip() for s in os.getenv("SYMBOLS", "BTC/USDT,ETH/USDT,SOL/USDT,BNB/USDT,XRP/USDT").split(",") if s.strip()]
 TIMEFRAME = os.getenv("TIMEFRAME", "1h")
 
 FAST_MA = int(os.getenv("FAST_MA", "20"))

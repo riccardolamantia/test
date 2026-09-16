@@ -15,21 +15,21 @@ def build_exchange() -> ccxt.Exchange:
     )
 
 
-def fetch_ohlcv(exchange: ccxt.Exchange, limit: int = 200) -> pd.DataFrame:
-    raw = exchange.fetch_ohlcv(config.SYMBOL, timeframe=config.TIMEFRAME, limit=limit)
+def fetch_ohlcv(exchange: ccxt.Exchange, symbol: str, limit: int = 200) -> pd.DataFrame:
+    raw = exchange.fetch_ohlcv(symbol, timeframe=config.TIMEFRAME, limit=limit)
     df = pd.DataFrame(raw, columns=["timestamp", "open", "high", "low", "close", "volume"])
     df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
     return df
 
 
-def fetch_ohlcv_history(exchange: ccxt.Exchange, total_candles: int) -> pd.DataFrame:
+def fetch_ohlcv_history(exchange: ccxt.Exchange, symbol: str, total_candles: int) -> pd.DataFrame:
     """Paginates fetch_ohlcv backwards in time to gather more candles than a single call allows."""
     timeframe_ms = exchange.parse_timeframe(config.TIMEFRAME) * 1000
     since = exchange.milliseconds() - total_candles * timeframe_ms
 
     all_rows = []
     while len(all_rows) < total_candles:
-        batch = exchange.fetch_ohlcv(config.SYMBOL, timeframe=config.TIMEFRAME, since=since, limit=1000)
+        batch = exchange.fetch_ohlcv(symbol, timeframe=config.TIMEFRAME, since=since, limit=1000)
         if not batch:
             break
         all_rows.extend(batch)
@@ -41,12 +41,12 @@ def fetch_ohlcv_history(exchange: ccxt.Exchange, total_candles: int) -> pd.DataF
     return df
 
 
-def place_order(exchange: ccxt.Exchange, side: str, price: float):
+def place_order(exchange: ccxt.Exchange, symbol: str, side: str, price: float):
     """Places a market order sized in quote currency. No-ops when DRY_RUN is on."""
     amount = config.TRADE_AMOUNT_QUOTE / price
 
     if config.DRY_RUN:
-        print(f"[DRY_RUN] {side.upper()} {amount:.6f} {config.SYMBOL} @ ~{price}")
-        return {"dry_run": True, "side": side, "amount": amount, "price": price}
+        print(f"[DRY_RUN] {side.upper()} {amount:.6f} {symbol} @ ~{price}")
+        return {"dry_run": True, "symbol": symbol, "side": side, "amount": amount, "price": price}
 
-    return exchange.create_order(config.SYMBOL, "market", side, amount)
+    return exchange.create_order(symbol, "market", side, amount)
