@@ -34,6 +34,10 @@ MOMENTUM_LOOKBACK = int(os.getenv("MOMENTUM_LOOKBACK", "30"))
 HOLD_PERIODS = int(os.getenv("HOLD_PERIODS", "7"))
 TOP_K = int(os.getenv("TOP_K", "5"))
 
+# Stocks and ETFs (src/stocks.py), via Yahoo Finance
+STOCK_TICKERS = [t.strip() for t in os.getenv("STOCK_TICKERS", "^GSPC,SPY,QQQ,EUNL.DE").split(",") if t.strip()]
+STOCK_YEARS = int(os.getenv("STOCK_YEARS", "20"))
+
 TRADE_AMOUNT_QUOTE = float(os.getenv("TRADE_AMOUNT_QUOTE", "50"))
 
 # Risk management: exit a position early if price moves this much against/in favor of entry

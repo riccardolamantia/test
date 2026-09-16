@@ -144,6 +144,26 @@ Imposta `DRY_RUN=false` nel `.env` solo quando:
 - l'importo per operazione (`TRADE_AMOUNT_QUOTE`) e i limiti di rischio
   (`STOP_LOSS_PCT`/`TAKE_PROFIT_PCT`) sono quelli che vuoi davvero.
 
+## Azioni ed ETF
+
+La stessa strategia, applicata a indici azionari ed ETF tramite Yahoo Finance, su
+decenni di storico invece dei pochi anni di dati crypto utilizzabili:
+
+```bash
+python -m src.stocks
+```
+
+I prezzi sono corretti per dividendi e frazionamenti, quindi il confronto con il
+buy&hold è sul rendimento totale. Ticker e profondità storica si impostano con
+`STOCK_TICKERS` e `STOCK_YEARS` nel `.env`.
+
+Due differenze importanti rispetto al crypto, a sfavore del bot:
+
+- **Le borse chiudono.** Su una brutta notizia notturna il prezzo riapre già sotto e lo
+  stop-loss viene scavalcato, non ti protegge. Il crypto è aperto 24/7.
+- **Le commissioni sono spesso fisse** (1-3€ a operazione dai broker italiani): su una
+  posizione da 200€ significa l'1%, dieci volte lo 0,1% simulato qui.
+
 ## Risultati dei test (misurati, non stimati)
 
 Tutti i numeri sotto includono le commissioni (0,1% per operazione) e provengono da dati
