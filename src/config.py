@@ -25,5 +25,11 @@ TRADE_AMOUNT_QUOTE = float(os.getenv("TRADE_AMOUNT_QUOTE", "50"))
 STOP_LOSS_PCT = float(os.getenv("STOP_LOSS_PCT", "5"))
 TAKE_PROFIT_PCT = float(os.getenv("TAKE_PROFIT_PCT", "10"))
 
+# Exchange taker fee applied on both buy and sell in the backtest (Binance spot default: 0.1%)
+FEE_PCT = float(os.getenv("FEE_PCT", "0.1"))
+
+# Number of historical candles to pull for `python -m src.backtest`
+BACKTEST_CANDLES = int(os.getenv("BACKTEST_CANDLES", "3000"))
+
 DRY_RUN = _bool(os.getenv("DRY_RUN", "true"))
 POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "300"))
