@@ -144,6 +144,31 @@ Imposta `DRY_RUN=false` nel `.env` solo quando:
 - l'importo per operazione (`TRADE_AMOUNT_QUOTE`) e i limiti di rischio
   (`STOP_LOSS_PCT`/`TAKE_PROFIT_PCT`) sono quelli che vuoi davvero.
 
+## Risultati dei test (misurati, non stimati)
+
+Tutti i numeri sotto includono le commissioni (0,1% per operazione) e provengono da dati
+storici reali di Binance. Il confronto è sempre contro l'alternativa più semplice
+possibile: comprare e non fare nulla.
+
+| Strategia | Periodo | Risultato | Non fare nulla |
+|---|---|---|---|
+| SMA crossover, solo BTC | 4 mesi | +4,70% | -6,96% |
+| SMA crossover, 5 monete | 4 mesi | +8,32% | -1,48% |
+| SMA crossover + filtro trend, 5 monete | 1 anno | **-13,28%** | -39,72% |
+| Rotazione momentum, 30 monete | 2 anni | **-66,05%** | +15,92% |
+
+Due lezioni che i numeri mostrano chiaramente:
+
+1. **Le finestre brevi ingannano.** Le prime due righe sembravano promettenti. La stessa
+   strategia, testata su un anno, ha perso. Un backtest su pochi mesi non dice nulla.
+2. **Provare tante strategie finché una "funziona" fabbrica illusioni.** Su abbastanza
+   tentativi, il caso produce sempre un vincitore apparente. È il motivo per cui questo
+   progetto si è fermato dopo tre strategie invece di cercarne una quarta.
+
+Nessuna delle strategie costruite qui ha battuto il non fare nulla su un orizzonte
+onesto. Chi riprende questo progetto dovrebbe partire da qui, non dall'entusiasmo del
+primo backtest positivo.
+
 ## Limiti di questo progetto
 
 - La strategia (incrocio di due medie mobili) è volutamente semplice: è un punto di
