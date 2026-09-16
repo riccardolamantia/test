@@ -176,14 +176,22 @@ possibile: comprare e non fare nulla.
 | SMA crossover, 5 monete | 4 mesi | +8,32% | -1,48% |
 | SMA crossover + filtro trend, 5 monete | 1 anno | **-13,28%** | -39,72% |
 | Rotazione momentum, 30 monete | 2 anni | **-66,05%** | +15,92% |
+| SMA + filtro trend, S&P 500 | 20 anni | +138,86% (4,45%/anno) | +475,34% (9,15%/anno) |
+| SMA + filtro trend, SPY | 20 anni | +166,04% (5,02%/anno) | +725,88% (11,14%/anno) |
+| SMA + filtro trend, Nasdaq (QQQ) | 20 anni | +269,02% (6,75%/anno) | +1965,79% (16,35%/anno) |
+| SMA + filtro trend, MSCI World | 17 anni | +98,15% (4,11%/anno) | +633,00% (12,45%/anno) |
 
-Due lezioni che i numeri mostrano chiaramente:
+Tre lezioni che i numeri mostrano chiaramente:
 
 1. **Le finestre brevi ingannano.** Le prime due righe sembravano promettenti. La stessa
    strategia, testata su un anno, ha perso. Un backtest su pochi mesi non dice nulla.
 2. **Provare tante strategie finché una "funziona" fabbrica illusioni.** Su abbastanza
    tentativi, il caso produce sempre un vincitore apparente. È il motivo per cui questo
    progetto si è fermato dopo tre strategie invece di cercarne una quarta.
+3. **Sulle azioni il bot guadagna, ma perde comunque contro il non fare nulla.** Sui
+   vent'anni rende il 4-7% annuo contro il 9-16% del buy&hold. L'unico periodo in cui
+   ha vinto è la crisi 2008: è di fatto un'assicurazione contro i crolli, pagata con
+   6-8 punti percentuali all'anno di rendimento mancato.
 
 Nessuna delle strategie costruite qui ha battuto il non fare nulla su un orizzonte
 onesto. Chi riprende questo progetto dovrebbe partire da qui, non dall'entusiasmo del
